@@ -1,0 +1,78 @@
+<!------------------------------------------------------------------------------------- 
+- This code is used if you want to add a countdown to a certain date onto
+- one of our websites.
+- 
+- Instructions:
+- - All you need to do is update the target date that is in the updateTimer function.
+- - This can be found on line 61, or with the "<-- TARGET DATE" identifier
+--------------------------------------------------------------------------------------->
+
+<!---------- 
+-- Styles --
+----------->
+<style>
+    .countdown-container {
+        display: flex;
+        font-size: 56px;
+        justify-content: center;
+        gap: 20px;
+        text-align: right;
+    }
+
+    .num {
+        width: 50px;
+    }
+</style>
+
+<!---------------------- 
+-- Countdown Elements --
+----------------------->
+<div class="countdown-container">
+    <p id="days" class="num">00</p>
+    <p>d :</p>
+    <p id="hours" class="num">00</p>
+    <p>h :</p>
+    <p id="minutes" class="num">00</p>
+    <p>m :</p>
+    <p id="seconds" class="num">00</p>
+    <p>s</p>
+</div>
+
+<!-------------- 
+-- JavaScript --
+--------------->
+<script>
+    const daysElement = document.getElementById("days");
+    const hoursElement = document.getElementById("hours");
+    const minutesElement = document.getElementById("minutes");
+    const secondsElement = document.getElementById("seconds");
+
+    const FPS = 30;
+
+    function updateTimer() {
+        /**
+         * This function:
+         * - gets the amount of time between the current date and the target date in MS
+         * - converts it into day : hour : minute : second format
+         * - updates HTML elements with these respective values (d : h : m : s)
+         */
+
+        const targetDay = new Date("January 15, 2026"); // <-- TARGET DATE
+        const today = Date.now();
+        const msLeft = targetDay - today;
+
+        const seconds = Math.floor(msLeft / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        daysElement.innerText = days;
+        hoursElement.innerText = hours % 24;
+        minutesElement.innerText = minutes % 60;
+        secondsElement.innerText = seconds % 60;
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+        setInterval(updateTimer, 1000 / FPS); // Updates [FPS] times per second
+    });
+</script>
