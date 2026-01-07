@@ -1,0 +1,300 @@
+<!--------------------------------------------------------------------- 
+- This code takes a div and places a floating USCAP molecule into it.
+-
+- Instructions:
+- - There are two places that will need to be updated: 
+- - - [ Molecule.minutesActive ] and [ startTimeEpoch ]
+- - There needs to be a div with a css id of "molecule-container"
+----------------------------------------------------------------------->
+
+<!-- Make sure there is a section in divi with the id of "molecule-container" -->
+
+<div id="molecule-container"></div>
+
+<!-- ADD EVERYTHING BELOW THIS LINE TO CODE SECTION -->
+
+<!----------------- 
+- MOLECULE STYLES -
+------------------>
+<style>
+    .molecule-element {
+        cursor: pointer;
+        position: relative;
+        z-index: 9999;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .clicked-molecule {
+        animation: pop-away 1s forwards;
+    }
+
+    .shown-molecule {
+        animation: pop-in 0.5s forwards;
+    }
+
+    @keyframes pop-away {
+        0% {
+            transform: scale(100%);
+            opacity: 100%;
+        }
+        50% {
+            transform: scale(120%);
+            opacity: 100%;
+        }
+        100% {
+            transform: scale(0%);
+            opacity: 0%;
+        }
+    }
+
+    @keyframes pop-in {
+        0% {
+            transform: scale(0%);
+            opacity: 0%;
+        }
+        50% {
+            transform: scale(120%);
+            opacity: 100%;
+        }
+        100% {
+            transform: scale(100%);
+            opacity: 100%;
+        }
+    }
+</style>
+
+<!----------------- 
+- MOLECULE SCRIPT -
+------------------>
+<script>
+    let intervalID;
+
+    class Molecule {
+        /**
+         * Represents an interactive molecule image element displayed on the webpage.
+         *
+         * The Molecule class manages all visual behavior and timing for a specific
+         * floating, clickable image ("molecule") — including its manual position,
+         * animation, availability window, and redirection behavior when clicked.
+         *
+         * Constructor parameters:
+         *  @param {number} startTime - Epoch time (ms) when the molecule should first appear
+         *  @param {string} sideOfPage - Determines placement ("left" or "right")
+         *  @param {string} formURL - URL to open when the molecule is clicked
+         */
+
+        constructor(startTime, sideOfPage, formURL) {
+            this.targetID = "molecule-element";
+            this.targetElement = document.getElementById(this.targetID);
+            this.imgURL = "https://uscap.org/wp-content/uploads/2025/10/cropped-uscap_favi-192x192-1.png";
+            this.missedImgURL = "https://uscap.org/wp-content/uploads/2025/11/missed_molecule.png";
+
+            this.formURL = formURL;
+            this.startTime = startTime;
+            this.sideOfPage = sideOfPage;
+
+            this.size = 50;
+
+            this.rotation = 0;
+            this.translation = 0;
+            this.fakeX = 0; // Used for the Sin wave to make the particle float
+            this.floatDistance = 5; // Height of the sin wave
+
+            this.pos = { x: 50, y: 0 };
+
+            this.minutesActive = 900000000; //<--- UPDATE THIS
+
+            this.hasBeenClicked = false;
+            this.isMolecule = true;
+            this.isTextBox = false;
+        }
+
+        PlaceOnPage() {
+            /**
+             * Displays the molecule on the screen by setting the image URL, size,
+             * and the event listener. It uses the image element located at
+             * this.targetElement.
+             */
+
+            // Create element and add it to the targeted section
+            const img = document.createElement("img");
+            this.targetElement = img;
+            this.targetElement.id = this.targetID;
+            this.targetElement.className = this.targetID;
+            this.targetElement.alt = "Molecule";
+            this.targetElement.src = this.imgURL;
+            this.targetElement.width = this.size;
+            document.getElementById("molecule-container").appendChild(img);
+
+            this.UpdatePosition();
+
+            // Event Listeners
+            this.targetElement.addEventListener("click", () => this.HandleClick());
+            this.targetElement.addEventListener("animationend", () => this.HandleAnimationEnd());
+        }
+
+        Hover() {
+            /**
+             * While unclicked, it will use the interval to continuously roatate
+             * and float the molecule. Once clicked, it will stop the calculations
+             * and hide the molecule using an animation placed on the class given.
+             */
+            if (this.WithinActiveTimeWindow()) {
+                // check if the element has been clicked yet
+                if (!this.hasBeenClicked) {
+                    // Float wave for up and down movement
+                    this.fakeX += 0.1;
+                    this.translation = Math.sin(this.fakeX) * this.floatDistance;
+
+                    // Spinning rotation
+                    this.rotation += 1;
+                    if (this.rotation == 360) this.rotation = 0;
+
+                    // Apply both rotation and translation
+                    this.targetElement.style.transform = `translateY(${this.translation}px) rotate(${this.rotation}deg)`;
+                }
+            } else {
+                this.targetElement.style.display = "none";
+            }
+        }
+
+        HandleClick() {
+            clearInterval(intervalID);
+            this.hasBeenClicked = true;
+            this.HideElement();
+        }
+
+        async HandleAnimationEnd() {
+            if (this.isMolecule) {
+                console.log("Is molecule");
+                // If winner found, change to textbox and update links
+                const winnerFound = await this.WinnerIsFound();
+                if (winnerFound) {
+                    console.log("Winner found");
+                    this.formURL = "https://uscap.org/member-appreciation-day/";
+                    this.isMolecule = false;
+                    this.ShowElement();
+                } else {
+                    console.log("Winner not found");
+                    window.open(this.formURL, "_blank");
+                }
+            } else if (!this.isTextBox) {
+                // Edge case where the textbox popping back in counts as an animation
+                this.isTextBox = true;
+            } else {
+                window.open(this.formURL, "_blank");
+            }
+        }
+
+        WithinActiveTimeWindow() {
+            /**
+             * Uses epochMiliseconds to check if the molecule is ready to be shown.
+             */
+            const MIN_TO_MS = 60000;
+            const currentTime = Date.now();
+
+            const timeDifference = currentTime - this.startTime;
+
+            if (timeDifference >= 0 && timeDifference < this.minutesActive * MIN_TO_MS) {
+                return true;
+            }
+            return false;
+        }
+
+        async WinnerIsFound() {
+            /**
+             * Uses a get request to check the google sheet at SHEET_URL. If there
+             * are more than submissionLimit fields, then return true. Otherwise,
+             * return false.
+             */
+            const SHEET_ID = "16BSshm7d3qH65foMhB9_nXufjk5Eku5CX7qYVFLtRmY";
+            const API_KEY = "AIzaSyD0vL9O3nJHpxv8uz4j2aL7CMxqCzyp5j0";
+            const RANGE = "Sheet1!A2:D50";
+            const SHEET_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+
+            const submissionLimit = 1;
+
+            let hasWinner = false;
+
+            try {
+                const response = await fetch(SHEET_URL);
+                if (!response.ok) throw new Error(`Response status: ${response.status}`);
+
+                const result = await response.json();
+
+                console.log(result);
+                if (result.hasOwnProperty("values")) {
+                    if (result["values"].length >= submissionLimit) {
+                        console.log("Length:", result["values"].length);
+                        hasWinner = true;
+                    }
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
+
+            return hasWinner;
+        }
+
+        HideElement() {
+            this.targetElement.classList.remove("shown-molecule");
+            this.targetElement.classList.add("clicked-molecule");
+        }
+
+        ShowElement() {
+            this.targetElement.classList.remove("clicked-molecule");
+            this.targetElement.classList.add("shown-molecule");
+
+            // Change to Textbox if clicked on molecule
+            if (!this.isMolecule) {
+                this.targetElement.src = this.missedImgURL;
+                this.targetElement.width = 200;
+                this.targetElement.style.transform = `translate(0) rotate(0)`;
+                this.targetElement.style.backgroundColor = "rgba(255, 255, 255, 1)";
+                this.targetElement.style.borderRadius = "10px";
+                this.targetElement.style.border = "solid 2px orange";
+                this.targetElement.style.boxShadow = "5px 5px 10px rgba(0, 0, 0, 0.3)";
+            }
+        }
+
+        UpdatePosition() {
+            /**
+             * Actually places the molecule image at the spot defined by this.pos.
+             */
+            if (this.sideOfPage === "left") {
+                this.targetElement.style.left = `${this.pos.x}px`;
+            } else if (this.sideOfPage === "right") {
+                this.targetElement.style.left = `${document.documentElement.clientWidth - this.pos.x * 5}px`;
+            } else {
+                this.targetElement.style.left = "50%";
+                this.targetElement.style.translate = "-50% 0";
+            }
+
+            this.targetElement.style.top = `${this.pos.y}px`;
+        }
+    }
+
+    /*********************
+     *       MAIN        *
+     ********************/
+
+    function main() {
+        const FPS = 30;
+        const sideOfPage = "center";
+        const startTimeEpoch = 1762963200000; //<----- UPDATE THIS
+
+        const molecule = new Molecule(
+            startTimeEpoch,
+            sideOfPage,
+            "https://docs.google.com/forms/d/e/1FAIpQLSeLv9aiL6J9clQ24rNzsQv2vSGqfD7cari7AQXyEXVJIrgi3w/viewform?usp=sharing&ouid=100073644147500019612"
+        );
+
+        molecule.PlaceOnPage();
+
+        // Create render loop
+        intervalID = setInterval(() => molecule.Hover(), 1000 / FPS);
+    }
+
+    window.addEventListener("DOMContentLoaded", main);
+</script>
