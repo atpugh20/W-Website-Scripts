@@ -1,11 +1,12 @@
 /**
+ * This file is located in the siteground files, and imported to the page
+ * using a script tag.
+ *
  * This data is pulled from the XCD API and cleaned using python.
  * The python project is: https://github.com/atpugh20/course-data-cleanup
  *
  * Make sure to delete any events that are not to be displayed.
  *
- * In Divi, you will need to combine this and index.js into one file.
- * (place this above code in index.js)
  */
 
 /***** DATA FOR CARDS *****/
