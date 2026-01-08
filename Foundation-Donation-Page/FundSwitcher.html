@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="styles.css" />
+        <title>Funds</title>
+    </head>
+    <body>
+        <style>
+            .buttons {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .row {
+                display: flex;
+                gap: 50px;
+                justify-content: center;
+                margin-bottom: 50px;
+            }
+
+            .fund-button {
+                color: purple;
+                padding-left: 25px;
+                padding-right: 25px;
+                border: solid purple 2px;
+                border-radius: 10px;
+            }
+
+            .fund-button:hover {
+                transition: 500ms;
+                cursor: pointer;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            }
+
+            .selected {
+                background-color: purple;
+                border: solid white 2px;
+                color: white;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            }
+        </style>
+
+        <!-------------------------- 
+        --        Buttons         --
+        --------------------------->
+        <div class="buttons">
+            <div class="row">
+                <div class="selected fund-button">
+                    <p>Fund 1</p>
+                </div>
+                <div class="fund-button">
+                    <p>Fund 2</p>
+                </div>
+                <div class="fund-button">
+                    <p>Fund 3</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="fund-button">
+                    <p>Fund 4</p>
+                </div>
+                <div class="fund-button">
+                    <p>Fund 5</p>
+                </div>
+                <div class="fund-button">
+                    <p>Fund 6</p>
+                </div>
+            </div>
+        </div>
+
+        <!-------------------------- 
+        --         FUNDS          --
+        --------------------------->
+
+        <!-- Sustaining the Academy -->
+        <div>
+            <div
+                id="fund1"
+                class="qgiv-embed-container"
+                data-qgiv-embed="true"
+                data-embed-id="87000"
+                data-embed="https://secure.qgiv.com/for/uscapfoundation/embed/87000/"
+                data-width="630"></div>
+            <script>
+                (function (w, d, s, id) {
+                    var js,
+                        fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) return;
+                    js = d.createElement(s);
+                    js.id = id;
+                    js.src = "https://secure.qgiv.com/resources/core/js/embed.js";
+                    fjs.parentNode.insertBefore(js, fjs);
+                })(window, document, "script", "qgiv-embedjs");
+            </script>
+        </div>
+
+        <!--  -->
+
+        <!-------------------------- 
+        --        JavaScript      --
+        --------------------------->
+        <script>
+            const buttonsObject = document.getElementsByClassName("fund-button");
+            const buttons = Array(buttonsObject);
+            console.log(typeof buttons);
+        </script>
+    </body>
+</html>
