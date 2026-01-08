@@ -17,10 +17,24 @@
         justify-content: center;
         gap: 20px;
         text-align: right;
+        font-family: Sans, Arial, sans-serif;
+        margin-top: 10px;
     }
 
-    .num {
-        width: 50px;
+    .countdown-container p {
+        margin: 0;
+    }
+
+    .num-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100px;
+    }
+
+    .num-type {
+        font-size: 20px;
     }
 </style>
 
@@ -28,14 +42,25 @@
 -- Countdown Elements --
 ----------------------->
 <div class="countdown-container">
-    <p id="days" class="num">00</p>
-    <p>d :</p>
-    <p id="hours" class="num">00</p>
-    <p>h :</p>
-    <p id="minutes" class="num">00</p>
-    <p>m :</p>
-    <p id="seconds" class="num">00</p>
-    <p>s</p>
+    <div class="num-section">
+        <p id="days" class="num">00</p>
+        <p class="num-type">Days</p>
+    </div>
+    <p>:</p>
+    <div class="num-section">
+        <p id="hours" class="num">00</p>
+        <p class="num-type">Hours</p>
+    </div>
+    <p>:</p>
+    <div class="num-section">
+        <p id="minutes" class="num">00</p>
+        <p class="num-type">Minutes</p>
+    </div>
+    <p>:</p>
+    <div class="num-section">
+        <p id="seconds" class="num">00</p>
+        <p class="num-type">Seconds</p>
+    </div>
 </div>
 
 <!-------------- 
