@@ -103,9 +103,26 @@
         --        JavaScript      --
         --------------------------->
         <script>
-            const buttonsObject = document.getElementsByClassName("fund-button");
-            const buttons = Array(buttonsObject);
-            console.log(typeof buttons);
+            function selectButton(target, buttonList) {
+                // Remove selected for all buttons first
+                for (let b of buttonList) {
+                    b.classList.remove("selected");
+                }
+
+                target.classList.add("selected");
+            }
+
+            /***** MAIN *****/
+
+            window.addEventListener("DOMContentLoaded", () => {
+                const buttons = document.getElementsByClassName("fund-button");
+
+                for (let button of buttons) {
+                    button.addEventListener("click", (e) => {
+                        selectButton(button, buttons);
+                    });
+                }
+            });
         </script>
     </body>
 </html>
