@@ -1,0 +1,143 @@
+<style>
+    .card-section {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+
+        display: flex;
+        gap: 20px;
+        padding: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .card {
+        background-color: white;
+        padding: 30px;
+        aspect-ratio: 3/4;
+        width: 26.5%;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+    .card-third {
+        height: 33%;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: end;
+    }
+    .card-image {
+        width: 30%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .card-button {
+        display: inline-block;
+        background-color: orange;
+        padding: 10px;
+        padding-left: 20px;
+        padding-right: 20px;
+        border-radius: 25px;
+        text-wrap: nowrap;
+    }
+
+    .card:hover {
+        background-color: grey;
+        transition: 500ms;
+    }
+</style>
+
+<div id="card-section" class="card-section"></div>
+
+<script>
+    function CreateCard(imageURL, title, description, buttonText, buttonLink) {
+        return `
+            <div class="card">
+                <div class="card-third">
+                    <img class="card-image" src="${imageURL}" />
+                </div>
+                <div class="card-text card-third">
+                    <h3>${title}</h3>
+                    <p>${description}</p>
+                </div>
+                <div class="card-third">
+                    ${
+                        buttonText
+                            ? `<div class="card-button">
+                                        <p>${buttonText}</p>
+                                    </div>`
+                            : ""
+                    }
+                </div>
+            </div>
+        `;
+    }
+
+    cards = [
+        {
+            imageURL: "https://uscap.org/wp-content/uploads/2026/04/donate-img-orange.png",
+            title: "Donate Online",
+            description: "[Insert Description here]",
+            buttonText: "Donate Today",
+            link: "#",
+        },
+        {
+            imageURL: "https://uscap.org/wp-content/uploads/2026/04/monthly-img-orange.png",
+            title: "Monthly Giving",
+            description: "[Insert Description here]",
+            buttonText: "Join the Club",
+            link: "#",
+        },
+        {
+            imageURL: "https://uscap.org/wp-content/uploads/2026/04/rose-img-orange.png",
+            title: "Tribute / Memorial Gift",
+            description: "[Insert Description here]",
+            buttonText: "Donate Today",
+            link: "#",
+        },
+        {
+            imageURL: "https://uscap.org/wp-content/uploads/2026/04/stocks-img-orange.png",
+            title: "Stock or Wire Transfer",
+            description: "[Insert Description here]",
+            buttonText: "Learn More",
+            link: "#",
+        },
+
+        {
+            imageURL: "https://uscap.org/wp-content/uploads/2026/04/mail-img-orange.png",
+            title: "Mail a Check",
+            description: `Checks should be made payable to the United States and Canadian Academy of Pathology (USCAP) and mailed to:<br><br> 201 N Palm Canyon Drive Suite 301 Palm Springs, CA 92262`,
+            buttonText: "",
+            link: "#",
+        },
+        {
+            imageURL: "https://uscap.org/wp-content/uploads/2026/04/mail-img-orange.png",
+            title: "Donor-Advised Funds",
+            description: "Support USCAP through your donor-advised fund.",
+            buttonText: "Give now",
+            link: "#",
+        },
+        {
+            imageURL: "https://uscap.org/wp-content/uploads/2026/04/mail-img-orange.png",
+            title: "Legacy Giving",
+            description:
+                "Leave a legacy at United States and Canadian Academy of Pathology by remembering us in your estate plans",
+            buttonText: "Learn More",
+            link: "#",
+        },
+    ];
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const cardSection = document.getElementById("card-section");
+
+        for (let card of cards) {
+            cardSection.innerHTML += CreateCard(
+                card.imageURL,
+                card.title,
+                card.description,
+                card.buttonText,
+                card.link,
+            );
+        }
+    });
+</script>
